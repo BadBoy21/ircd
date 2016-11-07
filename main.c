@@ -11,7 +11,6 @@
 
 int socketHandle;
 
-int clientSocketArray[10000];
 int totalClients = 0;
 
 Client * clientObjs[10000];
@@ -37,18 +36,18 @@ void sendToClient (char * someMessage, int clientHandle){
 void * clientThread(void * clientIDVoid){
 	printf("THREAD CREATED\n");
 
-	int clientID = (int *) clientIDVoid;
+	int clientID = (intptr_t) clientIDVoid;
 	printf("%i\n", clientID);
 
-	char buffer[256];
-	bzero(buffer,256);
+	char buffer[100000];
+	bzero(buffer,100000);
 	
 
-	while(read( clientObjs[clientID]->socketfd,buffer,255 ) > 0){
+	while(read( clientObjs[clientID]->socketfd,buffer,100000-1 ) > 0){
 
 		printf("%s\n", buffer);
 
-		bzero(buffer,256);
+		bzero(buffer,100000);
 
 	}
 
@@ -92,7 +91,7 @@ void clientConnection (){
 
 		pthread_t newClientThread;
 
-		int rc = pthread_create(&newClientThread, NULL, clientThread, (void *)clientID);
+		int rc = pthread_create(&newClientThread, NULL, clientThread, (void *)(intptr_t)clientID);
 		if (rc){
 			printf("ERROR; return code from pthread_create() is %d\n", rc);
 			exit(-1);
@@ -142,15 +141,10 @@ void bindSocketHandle(){
 
 }
 
-
-
 int main(){
 
-	
-
-
 	bindSocketHandle();
-
+	
 	
 //	for (;;) pause();
 

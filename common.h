@@ -4,3 +4,4 @@ typedef struct Clients {
 	int id;
 } Client;
 
+void sendToClient (char * someMessage, int clientHandle);
