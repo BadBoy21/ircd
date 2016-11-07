@@ -1,2 +1,2 @@
 hellomake: 
-	clang main.c -o output
+	gcc -pthread common.c main.c -o output
