@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "accountSetup.h"
+#include "clientSetup.h"
 #include "common.h"
 #include "router.h"
 

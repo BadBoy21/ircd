@@ -7,7 +7,7 @@
 #include <pthread.h>
 #include <signal.h>
 
-#include "accountSetup.h"
+#include "clientSetup.h"
 #include "common.h"
 #include "router.h"
 
@@ -103,7 +103,7 @@ void clientConnection (){
 		
 		
 		
-	
+
 		int rc = pthread_create(&clientPThreads[clientID], NULL, clientThread, (void *)(intptr_t)clientID);
 		
 		if (rc){
@@ -162,25 +162,28 @@ void bindSocketHandle(){
 void closeProgram(){
 
 	int i = 0;
-	
+
+	printf("Shutting down client sockets\n");
 	for( i = 0; i< totalClients; i++){
 		
 		shutdown(clientObjs[i]->socketfd, 2);
 		close(clientObjs[i]->socketfd);
 		pthread_join(clientPThreads[i], NULL);
-		printf("YOYOYOYOY\n");
+		printf("Closing client objects\n");
 		free(clientObjs[i]);
+		printf("Clearing client info memories\n");
 
 	}
-
+	printf("Shutting down listeners\n");
 	shutdown(socketHandle, 2);
+	printf("Closing down listener socket\n");
 	close(socketHandle);
 
-
+	printf("Server shutdown. Goodbye!\n");
 }
 
-int main(){
 
+int main(){
 
 
 	signal(SIGINT, closeProgram);
