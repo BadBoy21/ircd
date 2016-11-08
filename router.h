@@ -1,1 +1,1 @@
-void lineFixer(char * userInput, int outSocketHandle);
+void lineFixer(char * userInput, Client * clientObj);

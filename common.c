@@ -22,3 +22,4 @@ int checkPrefix(char * fullString, char * substring, int size){
 
 	return 0;
 }
+

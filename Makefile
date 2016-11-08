@@ -1,2 +1,2 @@
 hellomake: 
-	gcc -pthread common.c router.c accountSetup.c main.c -o output
+	gcc -pthread accountSetup.c common.c router.c main.c -o output

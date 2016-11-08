@@ -7,23 +7,25 @@
 #include <pthread.h>
 #include <signal.h>
 
+#include "accountSetup.h"
 #include "common.h"
 #include "router.h"
-#include "accountSetup.h"
+
 
 
 int socketHandle;
-
 int totalClients = 0;
-
 Client * clientObjs[10000];
+pthread_t clientPThreads[10000];
+
+
 
 Client * createClientObject(char * ip, int socketfd, int id){
 	Client * newClient = malloc(sizeof(Client));
 
 	strncpy(newClient->ip, ip, strlen(ip));
 	newClient->ip[strlen(ip)] = '\0';
-	
+
 	newClient->id = id;
 	newClient->socketfd = socketfd;
 	return newClient;
@@ -48,12 +50,18 @@ void * clientThread(void * clientIDVoid){
 	bzero(buffer,100000);
 	
 
-	while(read( clientObjs[clientID]->socketfd,buffer,100000-1) > 0){
+	while(1){
 
+		if(read( clientObjs[clientID]->socketfd,buffer,100000-1) > 0){
+			lineFixer(buffer, clientObjs[clientID]);
+
+			bzero(buffer,100000);
+		}
+		else{
+			
+			break;
+		}
 		
-		lineFixer(buffer, clientObjs[clientID]->socketfd);
-
-		bzero(buffer,100000);
 
 	}
 
@@ -93,10 +101,11 @@ void clientConnection (){
 
 
 		
-
-		pthread_t newClientThread;
-
-		int rc = pthread_create(&newClientThread, NULL, clientThread, (void *)(intptr_t)clientID);
+		
+		
+	
+		int rc = pthread_create(&clientPThreads[clientID], NULL, clientThread, (void *)(intptr_t)clientID);
+		
 		if (rc){
 			printf("ERROR; return code from pthread_create() is %d\n", rc);
 			exit(-1);
@@ -152,16 +161,21 @@ void bindSocketHandle(){
 
 void closeProgram(){
 
-	shutdown(socketHandle, 2);
-
 	int i = 0;
+	
 	for( i = 0; i< totalClients; i++){
+		
+		shutdown(clientObjs[i]->socketfd, 2);
 		close(clientObjs[i]->socketfd);
+		pthread_join(clientPThreads[i], NULL);
+		printf("YOYOYOYOY\n");
+		free(clientObjs[i]);
+
 	}
 
-
-	
+	shutdown(socketHandle, 2);
 	close(socketHandle);
+
 
 }
 
