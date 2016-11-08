@@ -9,6 +9,7 @@
 
 #include "common.h"
 #include "router.h"
+#include "accountSetup.h"
 
 
 int socketHandle;
@@ -21,6 +22,8 @@ Client * createClientObject(char * ip, int socketfd, int id){
 	Client * newClient = malloc(sizeof(Client));
 
 	strncpy(newClient->ip, ip, strlen(ip));
+	newClient->ip[strlen(ip)] = '\0';
+	
 	newClient->id = id;
 	newClient->socketfd = socketfd;
 	return newClient;
@@ -36,10 +39,10 @@ void sendToClient (char * someMessage, int clientHandle){
 }
 
 void * clientThread(void * clientIDVoid){
-	printf("THREAD CREATED\n");
+	
 
 	int clientID = (intptr_t) clientIDVoid;
-	printf("%i\n", clientID);
+	
 
 	char buffer[100000];
 	bzero(buffer,100000);
@@ -47,8 +50,7 @@ void * clientThread(void * clientIDVoid){
 
 	while(read( clientObjs[clientID]->socketfd,buffer,100000-1) > 0){
 
-		//printf("%s\n", buffer);
-
+		
 		lineFixer(buffer, clientObjs[clientID]->socketfd);
 
 		bzero(buffer,100000);
@@ -74,8 +76,7 @@ void clientConnection (){
 			perror("ERROR on accept");
 			exit(1);
 		}
-		printf("ACCEPTED\n");
-
+		
 		struct sockaddr_in* pV4Addr = (struct sockaddr_in*)&cli_addr;
 		struct in_addr ipAddr = pV4Addr->sin_addr;
 
@@ -86,7 +87,6 @@ void clientConnection (){
 		
 
 		clientObjs[totalClients] = createClientObject(str, newsockfd, totalClients);
-		printf("YOYOYOY %i\n", clientObjs[totalClients]->id);
 		int clientID = totalClients;
 
 		totalClients++;
@@ -166,6 +166,8 @@ void closeProgram(){
 }
 
 int main(){
+
+
 
 	signal(SIGINT, closeProgram);
 
