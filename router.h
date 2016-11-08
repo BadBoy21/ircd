@@ -1,0 +1,1 @@
+void lineFixer(char * userInput, int outSocketHandle);

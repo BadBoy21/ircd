@@ -5,8 +5,10 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <signal.h>
 
 #include "common.h"
+#include "router.h"
 
 
 int socketHandle;
@@ -43,9 +45,11 @@ void * clientThread(void * clientIDVoid){
 	bzero(buffer,100000);
 	
 
-	while(read( clientObjs[clientID]->socketfd,buffer,100000-1 ) > 0){
+	while(read( clientObjs[clientID]->socketfd,buffer,100000-1) > 0){
 
-		printf("%s\n", buffer);
+		//printf("%s\n", buffer);
+
+		lineFixer(buffer, clientObjs[clientID]->socketfd);
 
 		bzero(buffer,100000);
 
@@ -82,6 +86,7 @@ void clientConnection (){
 		
 
 		clientObjs[totalClients] = createClientObject(str, newsockfd, totalClients);
+		printf("YOYOYOY %i\n", clientObjs[totalClients]->id);
 		int clientID = totalClients;
 
 		totalClients++;
@@ -113,6 +118,9 @@ void bindSocketHandle(){
 
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
+	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &(int){ 1 }, sizeof(int)) < 0)
+		error("setsockopt(SO_REUSEADDR) failed");
+
 	if (sockfd < 0) {
 		perror("ERROR opening socket");
 		exit(1);
@@ -136,12 +144,30 @@ void bindSocketHandle(){
 	listen(sockfd, 10000);
 	socketHandle = sockfd;
 	
+	printf("Listening for new connections...\n");
 
 	clientConnection();
 
 }
 
+void closeProgram(){
+
+	shutdown(socketHandle, 2);
+
+	int i = 0;
+	for( i = 0; i< totalClients; i++){
+		close(clientObjs[i]->socketfd);
+	}
+
+
+	
+	close(socketHandle);
+
+}
+
 int main(){
+
+	signal(SIGINT, closeProgram);
 
 	bindSocketHandle();
 	
