@@ -7,11 +7,15 @@
 #include "router.h"
 
 
+
 void mainRouter(char * data, Client * clientObj){
 
-	char temp[strlen(data)+1];
+
+
+
+	char * temp = (char *)calloc(strlen(data)+1, sizeof(char));
 	strncpy(temp, data, strlen(data));
-	temp[strlen(data)] = '\0';
+	
 
 	if(checkPrefix(temp, "NICK ",5)==1){
 		char dataCheck[27];
@@ -21,28 +25,30 @@ void mainRouter(char * data, Client * clientObj){
 		setNick(dataCheck, clientObj);
 
 	}
-	if(checkPrefix(temp, "USER ",5)==1){
-		
-	}
+	
 
-
+	free(temp);
 }
 
 void lineFixer(char * userInput, Client * clientObj){
 	
-	char temp[strlen(userInput)+1];
+	char * temp = (char *)calloc(strlen(userInput)+1, sizeof(char));
 	strncpy(temp, userInput, strlen(userInput));
-	temp[strlen(userInput)] = '\0';
-
+	
 
 	char* token = strtok(temp, "\n");
 	while (token) {
-		
+
+
 		if(strlen(token) > 1){
+
+
+
 			mainRouter(token, clientObj);
 		}
 		
 		token = strtok(NULL, "\n");
 	}
+	free(temp);
 	
 }
