@@ -22,7 +22,7 @@ void mainRouter(char * data, Client * clientObj){
 
 	}
 	if(checkPrefix(temp, "USER ",5)==1){
-		printf("%s\n", temp);
+		
 	}
 
 

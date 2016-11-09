@@ -11,12 +11,12 @@
 #include "common.h"
 #include "router.h"
 
-
+#define MAXCLIENTS 10000
 
 int socketHandle;
 int totalClients = 0;
-Client * clientObjs[10000];
-pthread_t clientPThreads[10000];
+Client * clientObjs[MAXCLIENTS];
+pthread_t clientPThreads[MAXCLIENTS];
 
 
 
@@ -150,7 +150,7 @@ void bindSocketHandle(){
 
 
 	
-	listen(sockfd, 10000);
+	listen(sockfd, MAXCLIENTS);
 	socketHandle = sockfd;
 	
 	printf("Listening for new connections...\n");
