@@ -29,9 +29,9 @@ int checkPrefix(char * fullString, char * substring, int size){
 
 
 
-void strToken(char * input, char * delimiter, int  position){
+char * strToken(char * input, char * delimiter, int  position){
 
-	char*  clone = (char *)calloc(strlen(input) + strlen(delimiter) + 1, sizeof(char));;
+	char*  clone = (char *)calloc(strlen(input) + strlen(delimiter) + 1, sizeof(char));
 	
 	strncpy(clone, input, strlen(input));
 
@@ -60,16 +60,20 @@ void strToken(char * input, char * delimiter, int  position){
 			}
 			if(matchCount == delimSize){
 				if(i ==0){
-
 					position++;
-					
 				}
 				currentPosition++;
 				if(position == currentPosition){
 					int k = lastCharPosition;
+					int answerSize = i-lastCharPosition;
+					char * answer = (char *)calloc(answerSize+1, sizeof(char));
+
 					for(k=lastCharPosition;k<i; k++){
-						printf("%c\n", clone[k]);
+						//printf("%c\n", clone[k]);
+						answer[k-lastCharPosition] =clone[k] ;
 					}
+					free(clone);
+					return answer;
 				}
 				//printf("%i\n", lastCharPosition);
 				lastCharPosition = i+delimSize;
@@ -78,8 +82,9 @@ void strToken(char * input, char * delimiter, int  position){
 		matchCount = 0;
 	}
 	
-
 	free(clone);
+	char * answer = NULL;
+	return answer;
 
 }
 

@@ -26,6 +26,20 @@ void mainRouter(char * data, Client * clientObj){
 
 	}
 	
+	if(checkPrefix(temp, "USER ",5)==1){
+		
+		char * tempcopy = (char *)calloc(strlen(temp)+1, sizeof(char));
+		strncpy(tempcopy, temp, strlen(temp));
+
+		char * username = strToken(tempcopy, " ", 1);
+		if(username != NULL){
+			
+			setUser(username, clientObj);
+			printf("%s\n", clientObj->user);
+		}
+		free(tempcopy);
+		free(username);
+	}
 
 	free(temp);
 }

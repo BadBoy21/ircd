@@ -188,12 +188,10 @@ int main(){
 
 	
 
-	/*
-
 	signal(SIGINT, closeProgram);
 
 	bindSocketHandle();
-*/
+
 
 //	for (;;) pause();
 
